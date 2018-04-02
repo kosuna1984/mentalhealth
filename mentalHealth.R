@@ -72,3 +72,23 @@ summary(mental_set)
 
 
 #2. Data cleaning
+#Dealing with missing data
+#Let's get rid of the variables "Timestamp","comments", "state" since they don't provide a meaningful information for this investigation.
+
+mental_set$Timestamp <- NULL
+mental_set$comments <- NULL
+mental_set$state <- NULL
+
+#Checking there's no missing data
+is.na(mental_set) # It looks like "self_employed" has some missing values
+head(mental_set)
+
+# Age Gender        Country self_employed family_history treatment work_interfere   no_employees remote_work tech_company   benefits
+# 1  37 Female  United States          <NA>             No       Yes          Often           6-25          No          Yes        Yes
+# 2  44      M  United States          <NA>             No        No         Rarely More than 1000          No           No Don't know
+# 3  32   Male         Canada          <NA>             No        No         Rarely           6-25          No          Yes         No
+# 4  31   Male United Kingdom          <NA>            Yes       Yes          Often         26-100          No          Yes         No
+# 5  31   Male  United States          <NA>             No        No          Never        100-500         Yes          Yes        Yes
+# 6  33   Male  United States          <NA>            Yes        No      Sometimes           6-25          No          Yes        Yes
+
+
