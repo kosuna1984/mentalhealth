@@ -1,16 +1,37 @@
-#1. Library and data loading
+######################LIBRARY AND DATA LOADING
 
-#loading need libraries
-library(readr)
-library(stringr)
-library(tidyr)
-library(dplyr)
+# Function: installing and loading of packages
+install_load <- function (packages)  {   
+  
+  # Start loop to determine if each package is installed
+  for(package in packages){
+    
+    # If package is installed locally, load
+    if(package %in% rownames(installed.packages()))
+      do.call('library', list(package))
+    
+    # If package is not installed locally, download, then load
+    else {
+      install.packages(package, dependencies = TRUE)
+      do.call("library", list(package))
+    }
+  } 
+}
+
+# Generic libraries loading
+libs <- c("ggplot2", "maps", "plotly", "plyr", "dplyr", "rworldmap","stringr","lubridate", "plotly", "reshape2", "magrittr", "ggthemes", "tidyr", "DT", "lubridate","RColorBrewer")
+install_load(libs)
+
+# Specific methods libraries loading
+libs.methods <- c("C50", "lattice", "caret", "nnet", "e1071","Matrix", "foreach","glmnet","C50","randomForest","ipred","rpart")
+install_load(libs.methods)
 
 
 #Uploading survey Mental health csv dataset file into r 
-mental_set <- read.csv("survey.csv", header = TRUE)
+mental_set <- read.csv("survey.csv")
 View(mental_set)
 
+#############################ANALYZING DATA
 #Whats the data row count? 
 dim(mental_set)
 
@@ -21,7 +42,7 @@ head(mental_set)
 summary(mental_set)
 
 
-#2. Data cleaning
+############################DATA CLEANING
 #Dealing with missing data
 #Let's get rid of the variables "Timestamp","comments", "state" since they don't provide a meaningful information for this investigation.
 mental_set$Timestamp <- NULL
@@ -51,43 +72,57 @@ mental_set$work_interfere[is.na(mental_set$work_interfere)] <- "Don't Know"
 mental_set$work_interfere <- as.factor(mental_set$work_interfere)
 
 ##Cleaning "Gender" attribute  
-#Lower case all columm's elements in "Gender"
-levels(mental_set$Gender) <- tolower(levels(mental_set$Gender))
-
 #Select unique elements
-survey_gender <- unique(mental_set$Gender)
-View(survey_gender)
+# survey_gender <- unique(mental_set$Gender)
+# View(survey_gender)
 
 
-#Making gender groups
-female_str <- c("cis female", "f", "female", "woman",  "femake", "female ","cis-female/femme", "female (cis)", "femail")
-male_str <- c("male", "m", "male-ish", "maile", "mal", "male (cis)", "make", "male ", "man","msle", "mail", "malr","cis man")
+# Gender unification.
+mental_set$Gender %<>% str_to_lower()
+
+male_str <- c("male", "m", "male-ish", "maile", "mal", "male (cis)", "make", "male ", "man","msle", "mail", "malr","cis man", "cis male")
 trans_str <- c("trans-female", "something kinda male?", "queer/she/they", "non-binary","nah", "all", "enby", "fluid", "genderqueer", "androgyne", "agender", "male leaning androgynous", "guy (-ish) ^_^", "trans woman", "neuter", "female (trans)", "queer", "ostensibly male, unsure what that really means" )
+female_str <- c("cis female", "f", "female", "woman",  "femake", "female ","cis-female/femme", "female (cis)", "femail")
 
-
-for(i in 1:nrow(mental_set))
-  {
-  for(k in 1:length(str_detect(mental_set$Gender[i],trans_str)))
-    if(str_detect(mental_set$Gender[i],trans_str)[k] == TRUE){
-      mental_set$Gender[i] <- "trans"
-    }
-  
-  for(m in 1:length(str_detect(mental_set$Gender[i],male_str)))
-    if(str_detect(mental_set$Gender[i],male_str)[m] == TRUE){
-      mental_set$Gender[i] <- "male"
-    }
-  
-  for(o in 1:length(str_detect(mental_set$Gender[i],female_str)))
-    if(str_detect(mental_set$Gender[i],female_str)[o] == TRUE){
-      mental_set$Gender[i] <- "female"
-    }
-}
-
+mental_set$Gender <- sapply(as.vector(mental_set$Gender), function(x) if(x %in% male_str) "male" else x )
+mental_set$Gender <- sapply(as.vector(mental_set$Gender), function(x) if(x %in% female_str) "female" else x )
+mental_set$Gender <- sapply(as.vector(mental_set$Gender), function(x) if(x %in% trans_str) "trans" else x )
 mental_set %<>% filter(Gender != "a little about you")
 mental_set %<>% filter(Gender != "guy (-ish) ^_^")
 mental_set %<>% filter(Gender != "p")
 
 
+unique(mental_set$Gender)
+# [1] "female" "male"   "trans"
+
+
+#complete missing age with mean
+# Age value is very skewed with ages less than 0 and ages greater than 100. 
+# If Age is less than 21 set to NA; If Age is greater than 100 set to NA
+mental_set <- mental_set %>% mutate(Age = replace(Age, Age < 21, NA))
+mental_set <- mental_set %>% mutate(Age = replace(Age, Age > 65, NA))
+summary(mental_set)    #Age Mean   :32.28
+
+# Average value for Age is now 32; Reset values < 21 & > 100 = average age(32)
+mental_set <- mental_set %>% mutate(Age = replace(Age, Age < 21, 32))
+mental_set <- mental_set %>% mutate(Age = replace(Age, Age > 65, 32))
+mental_set$Age[is.na(mental_set$Age)] <- 32
+summary(mental_set)
+
+###################################ENCODING FACTOR VARIABLES
+#Checking what are factor variables
+str(mental_set)
+# $ Age                      : num  37 44 32 31 31 33 35 39 42 23 ...
+# $ Gender                   : chr  "female" "male" "male" "male" ...
+
+#Converting Gender into a factor
+mental_set$Gender <- as.factor(mental_set$Gender)
+
+
+
+#################COVARIANCE MATRIX. VARIABILITY COMPARISON BETWEEN CATEGORIES OF VARIABLES
+#correlation matrix
+corrplot(M, method="color")
 
 
 
@@ -96,11 +131,16 @@ mental_set %<>% filter(Gender != "p")
 
 
 
-NewGender <- replace(
-  male_str, 
-  mental_set$Gender, 
-  c("M")
-)
+
+
+
+
+
+
+
+
+
+
 
 
 
