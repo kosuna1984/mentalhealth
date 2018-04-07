@@ -84,21 +84,6 @@ divide.Data <- function(dataset){
 }
 divide.Data(First.Data)
 
-levels(actual.Data$Gender)
-
-male <- c("Cis Male","m","Mail","Make","male","Male ","male leaning androgynous","Malr","msle","cis male","Cis Man",
-          "Guy (-ish) ^_^","M","maile","Mal","Male","Male (CIS)","Male-ish","Man")
-female <- c("Cis Female","cis-female/femme","f","femail","female","Woman","F","Femake","Female","Female (cis)",
-            "woman")
-trans <- c("Female (trans)","Genderqueer","queer","Trans-female","Androgyne","Agender","p","queer/she/they","Trans woman")
-unknown <- c("A little about you","All","Neuter","ostensibly male, unsure what that really means","something kinda male?",
-             "Enby","fluid","Nah","non-binary")
-
-for(i in 1:male){
-  if()
-  actual.Data$Gender <- "Male"
-}
-Data_Subset$QUITSMOK[Data_Subset$QUITSMOK == 999] <- "Unknown"
 
 
 
