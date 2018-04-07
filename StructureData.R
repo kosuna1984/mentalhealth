@@ -2,10 +2,31 @@
 
 # Clean Environment:
 rm(list = ls())
-library(MASS)
-library(gdata)
-library(foreign)
-library(devtools)
+
+# Function: installing and loading of packages
+install_load <- function (packages)  {   
+  
+  # Start loop to determine if each package is installed
+  for(package in packages){
+    
+    # If package is installed locally, load
+    if(package %in% rownames(installed.packages()))
+      do.call('library', list(package))
+    
+    # If package is not installed locally, download, then load
+    else {
+      install.packages(package, dependencies = TRUE)
+      do.call("library", list(package))
+    }
+  } 
+}
+# Generic libraries loading
+libs <- c("ggplot2", "maps", "MASS", "gdata", "foreign", "devtools")
+install_load(libs)
+
+# Specific methods libraries loading
+libs.methods <- c("C50", "lattice", "caret", "nnet", "e1071","Matrix", "foreach","glmnet","C50","randomForest","ipred","rpart")
+install_load(libs.methods)
 
 get_os <- function(){
   sysinf <- Sys.info()
@@ -50,7 +71,7 @@ write.table(Third.Data, "ThirdData.xlx", row.names =T)
 write.table(Fourth.Data, "FourthData.sql", row.names =T)
 
 divide.Data <- function(dataset){
-  if(1:length(dataset) >= 3){
+  if(!is.null(1:length(dataset))){
     if(dataset[1:length(dataset) %% 2 == 1]){
       
     }
@@ -63,10 +84,21 @@ divide.Data <- function(dataset){
 }
 divide.Data(First.Data)
 
+levels(actual.Data$Gender)
 
+male <- c("Cis Male","m","Mail","Make","male","Male ","male leaning androgynous","Malr","msle","cis male","Cis Man",
+          "Guy (-ish) ^_^","M","maile","Mal","Male","Male (CIS)","Male-ish","Man")
+female <- c("Cis Female","cis-female/femme","f","femail","female","Woman","F","Femake","Female","Female (cis)",
+            "woman")
+trans <- c("Female (trans)","Genderqueer","queer","Trans-female","Androgyne","Agender","p","queer/she/they","Trans woman")
+unknown <- c("A little about you","All","Neuter","ostensibly male, unsure what that really means","something kinda male?",
+             "Enby","fluid","Nah","non-binary")
 
-
-
+for(i in 1:male){
+  if()
+  actual.Data$Gender <- "Male"
+}
+Data_Subset$QUITSMOK[Data_Subset$QUITSMOK == 999] <- "Unknown"
 
 
 
