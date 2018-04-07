@@ -1,5 +1,5 @@
 ######################LIBRARY AND DATA LOADING
-rm(list = ls())
+
 # Function: installing and loading of packages
 install_load <- function (packages)  {   
   
@@ -19,7 +19,7 @@ install_load <- function (packages)  {
 }
 
 # Generic libraries loading
-libs <- c("ggplot2", "maps", "plotly", "plyr", "dplyr", "rworldmap","stringr","lubridate", "plotly", "reshape2", "magrittr", "ggthemes", "tidyr", "DT", "lubridate","RColorBrewer","Hmisc")
+libs <- c("ggplot2", "maps", "plotly", "plyr", "dplyr", "rworldmap","stringr","lubridate", "plotly", "reshape2", "magrittr", "ggthemes", "tidyr", "DT", "lubridate","RColorBrewer")
 install_load(libs)
 
 # Specific methods libraries loading
@@ -96,7 +96,6 @@ unique(mental_set$Gender)
 # [1] "female" "male"   "trans"
 
 
-
 #complete missing age with mean
 # Age value is very skewed with ages less than 0 and ages greater than 100. 
 # If Age is less than 21 set to NA; If Age is greater than 100 set to NA
@@ -110,7 +109,7 @@ mental_set <- mental_set %>% mutate(Age = replace(Age, Age > 65, 32))
 mental_set$Age[is.na(mental_set$Age)] <- 32
 summary(mental_set)
 
-###################################ENCODING FACTOR VARIABLES
+###################################ENCODING DATA (FACTOR VARIABLES)
 #Checking what are factor variables
 str(mental_set)
 # $ Age                      : num  37 44 32 31 31 33 35 39 42 23 ...
@@ -118,14 +117,45 @@ str(mental_set)
 
 #Converting Gender into a factor
 mental_set$Gender <- as.factor(mental_set$Gender)
-iconv(mental_set$Gender, from ="", to="UTF-8")
+
+#Saving dataset levels list
+mental_set_levels <- lapply(mental_set,levels)
+
+#Converting dataset factor variables into numeric
+mental_set[, 2:24] <- sapply(mental_set[, 2:24], as.numeric)
+
 
 
 #################COVARIANCE MATRIX. VARIABILITY COMPARISON BETWEEN CATEGORIES OF VARIABLES
 #correlation matrix
-#mental_set is a data frame 
-mental_set[, 2:24] <- sapply(mental_set[, 2:24], as.numeric)
-rcorr(as.matrix(mental_set),type ="pearson")
+corrmat <- cor(mental_set)
+corrplot(corrmat, method="color")
+
+# Get rid of Country?
+
+#correlation matrix
+# corrmat = train_df.corr()
+# f, ax = plt.subplots(figsize=(12, 9))
+# sns.heatmap(corrmat, vmax=.8, square=True);
+# plt.show()
+
+#"Treatment" variable correlation matrix
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
