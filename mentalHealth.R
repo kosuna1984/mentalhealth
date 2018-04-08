@@ -131,16 +131,41 @@ mental_set[, 2:24] <- sapply(mental_set[, 2:24], as.numeric)
 corrmat <- cor(mental_set)
 corrplot(corrmat, method="color")
 
-# Get rid of Country?
 
-#correlation matrix
-# corrmat = train_df.corr()
-# f, ax = plt.subplots(figsize=(12, 9))
-# sns.heatmap(corrmat, vmax=.8, square=True);
-# plt.show()
 
 #"Treatment" variable correlation matrix
 
+
+
+###########################SOME CHARTS TO SEE DATA RELATIONSHIP
+#Histogram with density plot by Age
+a <- ggplot(mental_set, aes(x = Age))
+a + geom_histogram(aes(y = ..density..), 
+                   colour="black", fill="white") +
+  geom_density(alpha = 0.2, fill = "#FF6666")
+
+#Distribution and Density by Age Separate by treatment or not
+# # Color by groups
+# a + geom_histogram(aes(y = ..density.., color = treatment), 
+#                    fill = "white",
+#                    position = "identity")+
+#   geom_density(aes(color = treatment), size = 1) +
+#   scale_color_manual(values = c("#868686FF", "#EFC000FF"))
+
+
+
+###########################SCALING AND FITTING 
+#Normalizing or scaling "Age" variable, because is extremely different from the other ones (Min-Max Normalization)
+#(X - min(X))/(max(X) - min(X))
+#Above could be programmed as the following function in R:
+normalize <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+mental_set$Age <- as.data.frame(lapply(mental_set["Age"], normalize))
+head(mental_set)
+
+#Spliltting the dataset
 
 
 
