@@ -25,7 +25,6 @@ libs.methods <- c("C50", "lattice", "caret", "nnet", "e1071","Matrix", "foreach"
 install_load(libs.methods)
 
 
-
 # Import Mental Health data set
 
 # Make sure to either 
@@ -94,9 +93,6 @@ mental_set$work_interfere <- as.factor(mental_set$work_interfere)
 apply(mental_set, 2, function(x) any(is.na(x)))
 
 
-
-
-
 # Gender unification.
 mental_set$Gender %<>% str_to_lower()
 
@@ -110,9 +106,6 @@ mental_set$Gender <- sapply(as.vector(mental_set$Gender), function(x) if(x %in% 
 mental_set %<>% filter(Gender != "a little about you")
 mental_set %<>% filter(Gender != "guy (-ish) ^_^")
 mental_set %<>% filter(Gender != "p")
-
-
-
 
 
 # Plotting discrete variables (bar graphs)
@@ -130,8 +123,6 @@ ggplot(mental_set, aes(care_options, ..count..)) + geom_bar(aes(fill = treatment
 # Save mental_set data set as mental_set.orig before transforming into type numeric
 mental_set.orig <- mental_set
 # mental_set <-mental_set.orig
-
-
 
 
 ###    Preparing data for correlation    ###
@@ -226,13 +217,6 @@ ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
   coord_fixed()
 # Print the heatmap
 print(ggheatmap)
-
-
-
-
-
-
-
 
 
 ####____________ Preparing Data for Modeling ___________________________###
@@ -365,9 +349,6 @@ ggplot(mental_set, aes(care_options, ..count..)) + geom_bar(aes(fill = treatment
 mental_set.orig <- mental_set
 
 
-
-
-
 ###    Preparing data for modeling    ###
 
 # Convert factor variables into type numeric for modeling
@@ -376,10 +357,6 @@ mental_set_levels <- lapply(mental_set,levels)
 
 #Converting dataset factor variables into numeric
 mental_set[, 2:24] <- sapply(mental_set[, 2:24], as.numeric)
-
-
-
-
 
 # Split data set into train & test sets
 smp_siz = floor(0.75*nrow(mental_set))  # creates a value for dividing the data into train and test. In this case the value is defined as 75% of the number of rows in the dataset
@@ -398,8 +375,5 @@ test_y <- test_X["treatment"]
 # Drop the treatment variable and resave data set as "train_x" & "test_X (independent variables)
 train_X <- within(train_X, rm(treatment))
 test_X <- within(test_X, rm(treatment))
-
-
-
 
 
