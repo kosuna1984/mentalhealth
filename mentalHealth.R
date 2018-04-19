@@ -142,6 +142,3 @@ rcorr(as.matrix(mental_set),type ="pearson")
 
 
 
-
-
-

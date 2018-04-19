@@ -67,7 +67,7 @@ Fourth.Data <- actual.Data[,19:27]
 
 write.csv(First.Data, "FirstData.csv", row.names =T)
 write.table(Second.Data, "SecondData.txt", row.names =T)
-write.table(Third.Data, "ThirdData.xlx", row.names =T)
+write.table(Third.Data, "ThirdData.xlsx", row.names =T)
 write.table(Fourth.Data, "FourthData.sql", row.names =T)
 
 divide.Data <- function(dataset){
